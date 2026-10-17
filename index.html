@@ -1437,6 +1437,7 @@ This typically indicates that your device does not have a healthy Internet conne
     var v = $("myname").value.replace(/\s+/g, " ").trim().slice(0, 20);
     if (!v) { flash("Type your name first."); $("myname").focus(); return; }
     setMyName(v); flash("Saved. Friends will see " + v + ".");
+    if (pendingJoin) { var pj = pendingJoin; pendingJoin = null; $("hName").textContent = "Your name"; $("nameHint").textContent = "Friends see this name next to the items you bring."; doJoin(pj); return; }
     if (view === "trip" && members[me.id]) db.doc(tripPath() + "/members/" + me.id).update({ name: v }).catch(function () {});
   });
   function fillName() { $("myname").value = myName(); }
@@ -1448,11 +1449,16 @@ This typically indicates that your device does not have a healthy Internet conne
     var fallback = function () { box.hidden = false; box.focus(); box.select(); flash("Copy the link from the box."); };
     try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, fallback); else fallback(); } catch (e) { fallback(); }
   });
+  var pendingJoin = null;
   async function handleJoin() {
     var m = /^#join=([A-Za-z0-9]{10,40})$/.exec(location.hash || "");
     if (!m) return;
     var id = m[1];
     try { history.replaceState(null, "", location.href.split("#")[0]); } catch (e) {}
+    if (!myName()) { pendingJoin = id; $("hName").textContent = "Enter your name to join the trip"; $("nameHint").textContent = "Type your name, then tap Save name. You will join the trip right after."; $("myname").scrollIntoView(); $("myname").focus(); return; }
+    return doJoin(id);
+  }
+  async function doJoin(id) {
     if (!joinTrip) { flash("Could not join. Reload and try again."); return; }
     try { await joinTrip(id); } catch (e) { flash("That invite link is not valid, or the trip was deleted."); return; }
     var tries = 0;
