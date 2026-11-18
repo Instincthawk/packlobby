@@ -1242,7 +1242,7 @@ This typically indicates that your device does not have a healthy Internet conne
       if (!name) {
         top.innerHTML = '<div style="display:flex;flex-direction:column;gap:18px"><div style="display:flex;flex-direction:column;gap:6px;padding:0 4px"><div class="logo"><i>' + ic("suit", 20, 1.7, "#fff") + '</i>Packlobby</div><p class="meta" style="font-size:15px">Who\'s bringing what, and who paid.</p></div>' +
           '<div><div class="fan"><span class="pho ph-trek"></span><span class="pho ph-beach"></span><span class="pho ph-road"></span></div><div class="namecard"><label class="lbl" for="fname" style="font-size:15px;color:#111;font-weight:400;padding-left:6px">What should friends call you?</label>' +
-          '<div class="namepill"><input id="fname" type="text" maxlength="20" autocomplete="nickname" placeholder="For example: Roy"><button type="button" class="pill" data-a="fsave">Save name</button></div><p class="meta" style="padding:0 6px">Friends see this name next to the items you bring.</p>' + (auth ? '<button type="button" class="txtbtn c" data-a="alogin" data-v="in">Already have an account? Sign in</button>' : "") + '</div></div></div>';
+          '<div class="namepill"><input id="fname" type="text" maxlength="20" autocomplete="nickname" placeholder="For example: Roy"><button type="button" class="pill" data-a="fsave">Save name</button></div><p class="meta" style="padding:0 6px">Friends see this name next to the items you bring.</p>' + signedLine("") + '</div></div></div>';
       } else {
         top.innerHTML = '<div class="greet"><span class="av">' + esc(name.charAt(0).toUpperCase()) + '</span><div style="flex:1;min-width:0"><span class="meta" style="display:block">' + greeting() + '</span><span class="title" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(name) + '</span></div><button type="button" class="circ" data-a="edname" aria-label="Edit your name">' + ic("pencil", 18, 1.8, "#111") + '</button><button type="button" class="circ o" data-a="newtrip" aria-label="Plan a new trip">' + ic("plus", 20, 1.8, "#111") + "</button></div>";
       }
@@ -1266,6 +1266,13 @@ This typically indicates that your device does not have a healthy Internet conne
     body.innerHTML = h;
     renderNameSheet();
   }
+  // Under the name prompt: guests get the sign-in link; a signed-in account (new device, no name saved yet) is told so.
+  function signedLine(style) {
+    if (!auth) return "";
+    var i = auth.info();
+    if (i.guest) return '<button type="button" class="txtbtn c" data-a="alogin" data-v="in"' + (style ? ' style="' + style + '"' : "") + '>Already have an account? Sign in</button>';
+    return '<p class="meta" id="signedas" style="padding:0 6px;text-align:center' + (style ? ";" + style : "") + '">Signed in as ' + esc(i.email || i.name || "your account") + '. Add your name to continue.</p>';
+  }
   function accountCard() {
     var i = auth.info();
     if (i.guest) {
@@ -1285,7 +1292,7 @@ This typically indicates that your device does not have a healthy Internet conne
       box.innerHTML = '<div class="joinS pho ph-beach" role="dialog" aria-modal="true" aria-labelledby="jh"><div class="row sb"><div class="row" style="gap:8px;font-size:20px"><i style="width:30px;height:30px;border-radius:10px;background:#fff;display:inline-flex;align-items:center;justify-content:center">' + ic("suit", 18, 1.7, "#111") + '</i>Packlobby</div></div>' +
         '<div style="display:flex;flex-direction:column;gap:14px"><p class="meta" style="color:#fff;opacity:.92;font-size:14px">Who\'s bringing what, and who paid. Plan the trip together: a recommended packing list, items split between friends, and shared trip expenses.</p>' +
         '<div class="jglass"><h3 id="jh" style="font-size:22px">Enter your name to join the trip</h3><label for="jname" style="font-size:13px;font-weight:300;opacity:.88">What should friends call you?</label><input id="jname" class="in" type="text" maxlength="20" autocomplete="nickname" placeholder="For example: Asha" style="background:#fff;color:#111;padding:15px 20px"><span style="font-size:13px;font-weight:300;opacity:.88">Type your name, then tap Save name. You will join the trip right after.</span></div>' +
-        '<button type="button" class="btn white lg" data-a="jsave">Save name</button>' + (auth ? '<button type="button" class="txtbtn c" data-a="alogin" data-v="in" style="color:#fff">Already have an account? Sign in</button>' : "") + '</div></div>';
+        '<button type="button" class="btn white lg" data-a="jsave">Save name</button>' + signedLine("color:#fff") + '</div></div>';
       setTimeout(function () { var j = $("jname"); if (j) j.focus(); }, 30);
       return;
     }

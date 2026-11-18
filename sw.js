@@ -1,6 +1,6 @@
 // Packlobby service worker. Keeps the app shell on the phone so it opens fast and survives a weak connection.
 // It never touches Firebase traffic: trips, logins and saves always go straight to the network.
-var BUILD = "73cb9dfd5f";
+var BUILD = "be79777d07";
 var CORE = "pl-core-" + BUILD, FONTS = "pl-fonts-1";
 var SHELL = ["./", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 var FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
